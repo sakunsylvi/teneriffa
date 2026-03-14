@@ -1150,6 +1150,12 @@ legend.onAdd = function() {
     d.classList.remove('collapsed');
     d.classList.add('expanded');
   });
+  map.on('click', function() {
+    if (d.classList.contains('expanded')) {
+      d.classList.remove('expanded');
+      d.classList.add('collapsed');
+    }
+  });
   setTimeout(function() {
     d.classList.remove('expanded');
     d.classList.add('collapsed');
