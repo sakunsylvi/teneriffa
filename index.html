@@ -951,7 +951,7 @@ var homeMarker = L.marker([HOME_LAT, HOME_LON], {
   icon: L.divIcon({className:'',html:'<div style="font-size:28px;line-height:1;color:#222;text-shadow:0 0 3px #fff,0 0 6px #fff">&#9733;</div>',iconSize:[28,28],iconAnchor:[14,14]}),
   zIndexOffset: 1000
 }).bindPopup(`<b>Av. Jose Antonio Tavio, 15 - Home Base</b>`).addTo(map);
-var homeTooltipContent = `<b># 3 I 36</b><br>Av. Jose Antonio Tavio, 15<br>38630 Arona<br>Santa Cruz de Tenerife`;
+var homeTooltipContent = `<b># 3 I 36</b><br><b>Urbanización Santa Ana</b><br>Av. Jose Antonio Tavio, 15<br>38630 Arona<br>Santa Cruz de Tenerife`;
 function bindHomeTooltip() {
   var offset = map.getZoom() >= 15 ? [100, -100] : [50, -50];
   homeMarker.unbindTooltip();
