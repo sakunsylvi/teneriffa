@@ -911,7 +911,19 @@ return PolylineOffset;
 body{margin:0;padding:0;font-family:Arial,sans-serif}
 #map{position:absolute;top:40px;bottom:0;width:100%}
 #title{height:40px;background:#333;color:#fff;display:flex;align-items:center;padding:0 16px;font-size:16px;font-weight:bold}
-.legend{background:#fff;padding:10px 14px;border-radius:6px;box-shadow:0 1px 5px rgba(0,0,0,.3);font-size:12px;line-height:1.8;max-height:80vh;overflow-y:auto}
+.legend{background:#fff;border-radius:6px;box-shadow:0 1px 5px rgba(0,0,0,.3);font-size:12px;line-height:1.8;max-height:80vh;overflow-y:auto;transition:all .3s ease}
+.legend.expanded{padding:10px 14px}
+.legend.collapsed{padding:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.legend.collapsed .legend-content{display:none}
+.legend.collapsed .legend-close{display:none}
+.legend.collapsed .legend-info-btn{display:flex}
+.legend.expanded .legend-info-btn{display:none}
+.legend.expanded .legend-close{display:block;position:absolute;top:4px;right:8px;cursor:pointer;font-size:16px;font-weight:bold;color:#666;background:none;border:none;line-height:1}
+.legend.expanded .legend-content{display:block}
+.legend{position:relative}
+.legend-info-btn{width:30px;height:30px;border-radius:50%;background:#fff;color:#333;font-weight:bold;font-size:16px;font-style:italic;display:none;align-items:center;justify-content:center;font-family:serif}
+.legend-toast{position:fixed;bottom:60px;right:10px;background:rgba(0,0,0,.8);color:#fff;padding:6px 14px;border-radius:16px;font-size:12px;opacity:0;transition:opacity .4s ease;pointer-events:none;z-index:10000}
+.legend-toast.show{opacity:1}
 .legend h4{margin:0 0 4px;font-size:13px}
 .legend-dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-right:4px}
 .legend-cds{border:3px solid #2ecc71;background:#000;width:10px;height:10px}
@@ -1116,15 +1128,38 @@ L.control.layers({}, {
 // Legend
 var legend = L.control({position:'bottomright'});
 legend.onAdd = function() {
-  var d = L.DomUtil.create('div','legend');
-  d.innerHTML = '<h4>Overlays</h4>'
+  var d = L.DomUtil.create('div','legend expanded');
+  d.innerHTML = '<span class="legend-info-btn">i</span>'
+    + '<button class="legend-close">&times;</button>'
+    + '<div class="legend-content">'
+    + '<h4>Overlays</h4>'
     + '<span style="display:inline-block;width:20px;border-top:2px dashed #666;vertical-align:middle;margin-right:4px"></span> Municipios<br>'
     + '<b style="font-size:11px">Bus routes: unique color per line</b><br>'
     + '<span style="display:inline-block;width:20px;border-top:4px solid #e6194b;vertical-align:middle;margin-right:4px"></span> Solid<br>'
     + '<span style="display:inline-block;width:20px;border-top:4px dashed #3cb44b;vertical-align:middle;margin-right:4px"></span> Dashed<br>'
     + '<span style="display:inline-block;width:20px;border-top:4px dotted #4363d8;vertical-align:middle;margin-right:4px"></span> Dotted<br>'
     + '<i style="font-size:10px">Click map to list routes nearby</i><br>'
-    + '<div style="display:flex;justify-content:space-between;align-items:center"><span><span style="font-size:14px;vertical-align:middle;margin-right:4px">&#9733;</span> Home</span><span id="zoomLevel" style="font-weight:bold;color:#666">Z: 15</span></div>';
+    + '<div style="display:flex;justify-content:space-between;align-items:center"><span><span style="font-size:14px;vertical-align:middle;margin-right:4px">&#9733;</span> Home</span><span id="zoomLevel" style="font-weight:bold;color:#666">Z: 15</span></div>'
+    + '</div>';
+  L.DomEvent.disableClickPropagation(d);
+  d.querySelector('.legend-close').addEventListener('click', function() {
+    d.classList.remove('expanded');
+    d.classList.add('collapsed');
+  });
+  d.querySelector('.legend-info-btn').addEventListener('click', function() {
+    d.classList.remove('collapsed');
+    d.classList.add('expanded');
+  });
+  setTimeout(function() {
+    d.classList.remove('expanded');
+    d.classList.add('collapsed');
+    var toast = document.createElement('div');
+    toast.className = 'legend-toast show';
+    toast.textContent = 'Tap (i) for legend';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.classList.remove('show'); }, 2000);
+    setTimeout(function() { toast.remove(); }, 2500);
+  }, 5000);
   return d;
 };
 legend.addTo(map);
